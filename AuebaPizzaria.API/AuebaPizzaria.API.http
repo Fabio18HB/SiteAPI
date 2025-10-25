@@ -1,0 +1,6 @@
+@AuebaPizzaria.API_HostAddress = http://localhost:5230
+
+GET {{AuebaPizzaria.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
