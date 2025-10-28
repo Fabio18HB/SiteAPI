@@ -14,10 +14,22 @@ public class Produto
     public string Nome{get; set;}
 
     [StringLength(3000)]
-    public string Foto {get; set;}
+    [Display(Name = "Descrição")]
+    public string Descricao {get; set;}
 
-    [Display(Name = "Exibir na home")]
-    public bool ExibirHome {get; set;}
+    [Display(Name = "Quantidade em estoque")]
+    [Required(ErrorMessage ="Por favor, informe a quantidade em estoque")]
+    [Range(0, int.MaxValue)]
+    public int QtdeEstoque {get; set;}
+
+    [Display(Name ="Valor de Venda")]
+    [Required(ErrorMessage = "Por favor, informe o valor de venda")]
+    [Range(0, double.MaxValue)]
+    [Column(TypeName ="numeric(10,2)")]
+    public decimal ValorVenda {get; set;}
+      
+    public bool ExibirHome {get; set;} = false;
+    public List<Produto> Fotos {get; set;}
 }
 
 

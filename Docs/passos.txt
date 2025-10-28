@@ -1,6 +1,6 @@
 Configurar
-git config --global user.name Natan577
-git config --global user.email natanraimundo53@gmail.com
+git config --global user.name Fabio18HB
+git config --global user.email fabheriq@gmail.com
 
 ///////////////////////////////////////////////////////////
 
@@ -488,8 +488,6 @@ using GStore.API.Models;
 
 namespace GStore.API.Services.Implementations;
 
-public class AuthService : IAuthService
-{
     private readonly UserManager<Usuario> _userManager;
     private readonly SignInManager<Usuario> _signInManager;
     private readonly IJwtService _jwtService;
