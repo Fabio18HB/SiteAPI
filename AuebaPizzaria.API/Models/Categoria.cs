@@ -15,7 +15,9 @@ public class Categoria {
     [StringLength(300)]
     public string Foto {get; set;}
 
+    [StringLength(26)]
+    public string Cor { get; set; } = "rgba(0,0,0,1)";
+
     [Display(Name = "Exibir na home")]
     public bool ExibirHome {get; set;}
-}
-
+};

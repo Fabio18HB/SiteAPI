@@ -1,125 +1,62 @@
-using Microsoft.AspNetCore.Identity;
-using GStore.API.DTOs;
-using GStore.API.Services.Interfaces;
-using GStore.API.Models;
+using AuebaPizzaria.API.Services.Interfaces;
 
-namespace GStore.API.Services.Implementations;
+namespace AuebaPizzaria.API.Services.Implementations;
 
-    private readonly UserManager<Usuario> _userManager;
-    private readonly SignInManager<Usuario> _signInManager;
-    private readonly IJwtService _jwtService;
-    private readonly IFileService _fileService;
+public class FileService : IFileService
+{
+    private readonly IWebHostEnvironment _environment;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthService(
-        UserManager<Usuario> userManager,
-        SignInManager<Usuario> signInManager,
-        IJwtService jwtService,
-        IFileService fileService
-    )
+    public FileService(IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _jwtService = jwtService;
-        _fileService = fileService;
+        _environment = environment;
+        _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<AuthResponseDto> RegisterAsync(RegisterDto registerDto)
+    public async Task<string> SaveFileAsync(IFormFile file, string subDirectory)
     {
-        var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
-        if (existingUser != null)
-        {
+        if (file == null || file.Length == 0)
             return null;
+
+        // Criar diretório se não existir
+        var uploadsPath = Path.Combine(_environment.WebRootPath, subDirectory);
+        if (!Directory.Exists(uploadsPath))
+            Directory.CreateDirectory(uploadsPath);
+
+        // Gerar nome único para o arquivo
+        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        var filePath = Path.Combine(subDirectory, fileName); // Salva o path relativo
+        var fullPath = Path.Combine(_environment.WebRootPath, filePath);
+
+        // Salvar arquivo
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
         }
 
-        // Salvar a foto se existir
-        string fotoPath = null;
-        if (registerDto.Foto != null)
-        {
-            fotoPath = await _fileService.SaveFileAsync(registerDto.Foto, "img/usuarios");
-        }
-
-        var user = new Usuario
-        {
-            UserName = registerDto.Email,
-            Email = registerDto.Email,
-            Nome = registerDto.Nome,
-            DataNascimento = registerDto.DataNascimento,
-            Foto = fotoPath // Armazena "img/usuarios/guid.ext"
-        };
-
-        var result = await _userManager.CreateAsync(user, registerDto.Senha);
-        if (!result.Succeeded)
-        {
-            if (fotoPath != null)
-                await _fileService.DeleteFileAsync(fotoPath);
-            return null;
-        }
-
-        var token = _jwtService.GenerateToken(user);
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Nome = user.Nome,
-            DataNascimento = user.DataNascimento,
-            Foto = fotoPath != null ? _fileService.GetFileUrl(fotoPath) : null
-        };
-
-        return new AuthResponseDto
-        {
-            Token = token,
-            Expiration = DateTime.UtcNow.AddMinutes(60),
-            User = userDto
-        };
+        return filePath; // Retorna o path relativo: "img/usuarios/arquivo.png"
     }
 
-    public async Task<AuthResponseDto> LoginAsync(LoginDto loginDto)
+    public async Task<bool> DeleteFileAsync(string filePath)
     {
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
-        if (user == null)
+        if (string.IsNullOrEmpty(filePath))
+            return false;
+
+        var fullPath = Path.Combine(_environment.WebRootPath, filePath);
+        if (File.Exists(fullPath))
         {
-            return null;
+            File.Delete(fullPath);
+            return true;
         }
-
-        var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Senha, false);
-        if (!result.Succeeded)
-        {
-            return null;
-        }
-
-        var token = _jwtService.GenerateToken(user);
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Nome = user.Nome,
-            DataNascimento = user.DataNascimento,
-            Foto = !string.IsNullOrEmpty(user.Foto) ? _fileService.GetFileUrl(user.Foto) : null
-        };
-
-        return new AuthResponseDto
-        {
-            Token = token,
-            Expiration = DateTime.UtcNow.AddMinutes(60),
-            User = userDto
-        };
+        return false;
     }
 
-    public async Task<UserDto> GetUserByIdAsync(string userId)
+    public string GetFileUrl(string filePath)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
+        if (string.IsNullOrEmpty(filePath))
             return null;
-        }
 
-        return new UserDto
-        {
-            Id = user.Id,
-            Email = user.Email,
-            Nome = user.Nome,
-            DataNascimento = user.DataNascimento,
-            Foto = !string.IsNullOrEmpty(user.Foto) ? _fileService.GetFileUrl(user.Foto) : null
-        };
+        var request = _httpContextAccessor.HttpContext.Request;
+        return $"{request.Scheme}://{request.Host}/{filePath.Replace("\\", "/")}";
     }
 }

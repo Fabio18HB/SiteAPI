@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 namespace AuebaPizzaria.API.Models;
 
     [Table("Usuario")]
-    public class Usuario
+    public class Usuario : IdentityUser
 {
     [StringLength(50)]
     [Required(ErrorMessage = "O nome é obrigatório")]

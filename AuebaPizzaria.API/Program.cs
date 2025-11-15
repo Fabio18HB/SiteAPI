@@ -1,6 +1,9 @@
 using System.Text;
 using AuebaPizzaria.API.Data;
+using AuebaPizzaria.API.Middleware;
 using AuebaPizzaria.API.Models;
+using AuebaPizzaria.API.Services.Implementations;
+using AuebaPizzaria.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -64,7 +67,13 @@ builder.Services.AddAuthentication(options =>
 // Adicionar a Autorização
 builder.Services.AddAuthorization();
 
-// Registro dos Serviços 
+// Serviço de Arquivos
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IFileService, FileService>();
+
+// Registro dos Serviços Customizados
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Configuração do CORS
 builder.Services.AddCors(options =>
@@ -127,14 +136,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "GStore v1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuebaPizzaria v1");
         c.RoutePrefix = string.Empty;
     });
 }
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseCors("AllowAll");
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

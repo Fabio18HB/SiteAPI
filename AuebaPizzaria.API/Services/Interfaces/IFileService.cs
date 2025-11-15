@@ -1,6 +1,6 @@
 namespace AuebaPizzaria.API.Services.Interfaces;
 
-    public interface IFileService
+public interface IFileService
 {
     Task<string> SaveFileAsync(IFormFile file, string subDirectory = "uploads");
     Task<bool> DeleteFileAsync(string filePath);

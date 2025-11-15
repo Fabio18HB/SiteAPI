@@ -15,7 +15,7 @@ public class RegisterDto
     [Required]
     public string Nome { get; set; } 
 
-    public DateTime? DataNascimento { get; set; } 
+    public DateTime DataNascimento { get; set; } 
 
     public IFormFile Foto { get; set; }
 }
@@ -36,6 +36,7 @@ public class UserDto
     public string Nome { get; set; } 
     public DateTime? DataNascimento { get; set; }
     public string Foto { get; set; } 
+    public string Perfil { get; set; }
 }
 
 public class AuthResponseDto
@@ -43,4 +44,4 @@ public class AuthResponseDto
     public string Token { get; set; } = string.Empty;
     public DateTime Expiration { get; set; }
     public UserDto User { get; set; } = null!;
-}
+};
