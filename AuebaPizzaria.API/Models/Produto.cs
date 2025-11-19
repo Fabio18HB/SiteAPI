@@ -7,31 +7,31 @@ namespace AuebaPizzaria.API.Models;
 public class Produto
 {
     [Key]
-    public int Id {get; set;}
+    public int Id { get; set; }
 
+    [Required]
     [StringLength(100)]
-    [Required(ErrorMessage = "Nome é obrigatório")]
-    public string Nome{get; set;}
+    public string Nome { get; set; }
 
     [StringLength(3000)]
-    [Display(Name = "Descrição")]
-    public string Descricao {get; set;}
+    public string Descricao { get; set; }
 
-    [Display(Name = "Quantidade em estoque")]
-    [Required(ErrorMessage ="Por favor, informe a quantidade em estoque")]
-    [Range(0, int.MaxValue)]
-    public int QtdeEstoque {get; set;}
+    public int Qtde { get; set; }   // Controller usa "Qtde"
 
-    [Display(Name ="Valor de Venda")]
-    [Required(ErrorMessage = "Por favor, informe o valor de venda")]
-    [Range(0, double.MaxValue)]
-    [Column(TypeName ="numeric(10,2)")]
-    public decimal ValorVenda {get; set;}
-      
-    public bool ExibirHome {get; set;} = false;
-    public List<Produto> Fotos {get; set;}
+    [Column(TypeName = "numeric(10,2)")]
+    public decimal ValorCusto { get; set; } // Controller usa isto
+
+    [Column(TypeName = "numeric(10,2)")]
+    public decimal ValorVenda { get; set; }
+
+    public bool Destaque { get; set; } = false; // controller usa "Destaque"
+
+    [StringLength(255)]
+    public string Foto { get; set; }  // Controller usa Foto
+
+    // Relação com Categoria
+    public int CategoriaId { get; set; }
+    public Categoria Categoria { get; set; }
+    public int QtdeEstoque { get; internal set; }
+    public bool ExibirHome { get; internal set; }
 }
-
-
-
-
