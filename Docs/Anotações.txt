@@ -1,0 +1,9 @@
+-- Configuração do GIT
+git config --global user.name Fabio18HB
+git config --global user.email fabheriq@gmail.com
+
+cd AuebaPizzaria.API
+dotnet watch run
+
+cd AuebaPizzaria.UI
+dotnet watch run
