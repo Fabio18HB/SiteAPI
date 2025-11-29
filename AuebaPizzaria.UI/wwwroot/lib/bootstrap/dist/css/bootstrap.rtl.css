@@ -349,7 +349,7 @@ sup {
 }
 
 a {
-  color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+  color: #dc3545, #dc3545;
   text-decoration: underline;
 }
 a:hover {

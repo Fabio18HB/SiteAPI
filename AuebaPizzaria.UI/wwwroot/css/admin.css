@@ -10,6 +10,7 @@ body {
 }
 
 .navbar {
+    background-color: #881300;
     z-index: 1030;
 }
 
@@ -22,6 +23,7 @@ body {
 
 /* ===== SIDEBAR ===== */
 .sidebar {
+    background-color: #881300;
     position: fixed;
     top: 65px;
     left: 0;
@@ -56,7 +58,7 @@ body {
 }
 
 .sidebar .nav-link.active {
-    background-color: var(--bs-primary);
+    background-color: #881300;
     color: var(--bs-white);
 }
 
@@ -70,7 +72,7 @@ body {
 
 .sidebar.collapsed .nav-link.active {
     margin-right: 10px;
-    background-color: var(--bs-primary);
+    background-color: #881300;
     color: var(--bs-white);
 }
 
